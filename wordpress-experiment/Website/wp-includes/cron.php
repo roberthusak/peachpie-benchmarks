@@ -959,7 +959,7 @@ function _get_cron_array() {
  *
  * @access private
  *
- * @param array $cron Cron info array from _get_cron_array().
+ * @param array|false $cron Cron info array from _get_cron_array().
  * @return bool True if cron array updated, false on failure.
  */
 function _set_cron_array( $cron ) {

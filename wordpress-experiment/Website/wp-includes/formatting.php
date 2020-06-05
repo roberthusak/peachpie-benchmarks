@@ -4581,7 +4581,7 @@ function wp_make_link_relative( $link ) {
  * @global wpdb $wpdb WordPress database abstraction object.
  *
  * @param string $option The name of the option.
- * @param string $value  The unsanitised value.
+ * @param mixed $value  The unsanitised value.
  * @return string Sanitized value.
  */
 function sanitize_option( $option, $value ) {

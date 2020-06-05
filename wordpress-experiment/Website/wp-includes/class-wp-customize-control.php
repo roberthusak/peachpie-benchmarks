@@ -202,9 +202,9 @@ class WP_Customize_Control {
 	 *     @type array                $json            Deprecated. Use WP_Customize_Control::json() instead.
 	 *     @type string               $type            Control type. Core controls include 'text', 'checkbox',
 	 *                                                 'textarea', 'radio', 'select', and 'dropdown-pages'. Additional
-	 *                                                 input types such as 'email', 'url', 'number', 'hidden', and
+   *                                                 input types such as 'email', 'url', 'number', 'hidden', and
 	 *                                                 'date' are supported implicitly. Default 'text'.
-	 *     @type callback             $active_callback Active callback.
+	 *     @type callable             $active_callback Active callback.
 	 * }
 	 */
 	public function __construct( $manager, $id, $args = array() ) {
@@ -489,7 +489,7 @@ class WP_Customize_Control {
 		$describedby_attr = ( ! empty( $this->description ) ) ? ' aria-describedby="' . esc_attr( $description_id ) . '" ' : '';
 		switch ( $this->type ) {
 			case 'checkbox':
-				?>
+?>
 				<span class="customize-inside-control-row">
 					<input
 						id="<?php echo esc_attr( $input_id ); ?>"

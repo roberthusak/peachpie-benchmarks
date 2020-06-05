@@ -3100,7 +3100,7 @@ function _prime_comment_caches( $comment_ids, $update_meta_cache = true ) {
  * @access private
  * @since 2.7.0
  *
- * @param WP_Post  $posts Post data object.
+ * @param WP_Post[]  $posts Post data object.
  * @param WP_Query $query Query object.
  * @return array
  */

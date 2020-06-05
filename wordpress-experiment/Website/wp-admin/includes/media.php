@@ -2325,7 +2325,7 @@ function media_upload_type_form( $type = 'file', $errors = null, $id = null ) {
 			add_filter( 'attachment_fields_to_edit', 'media_post_single_attachment_fields_to_edit', 10, 2 );
 			echo get_media_items( $id, $errors );
 		} else {
-			echo '<div id="media-upload-error">' . esc_html( $id->get_error_message() ) . '</div></div>';
+			echo '<div id="media-upload-error">' . esc_html( /*$id->get_error_message()*/ "" ) . '</div></div>';
 			exit;
 		}
 	}

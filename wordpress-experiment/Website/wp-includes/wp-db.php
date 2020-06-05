@@ -773,7 +773,7 @@ class wpdb {
 	 *
 	 * @since 3.1.0
 	 *
-	 * @param resource $dbh     The resource given by mysql_connect
+	 * @param mysqli   $dbh     The resource given by mysql_connect
 	 * @param string   $charset Optional. The character set. Default null.
 	 * @param string   $collate Optional. The collation. Default null.
 	 */
@@ -1068,7 +1068,7 @@ class wpdb {
 	 * @since 0.71
 	 *
 	 * @param string        $db  MySQL database name
-	 * @param resource|null $dbh Optional link identifier.
+	 * @param mysqli|null   $dbh Optional link identifier.
 	 */
 	public function select( $db, $dbh = null ) {
 		if ( is_null( $dbh ) ) {

@@ -2921,7 +2921,7 @@ function wp_body_open() {
  *
  * @since 2.8.0
  *
- * @param array $args Optional arguments.
+ * @param array|string $args Optional arguments.
  */
 function feed_links( $args = array() ) {
 	if ( ! current_theme_supports( 'automatic-feed-links' ) ) {
@@ -2967,7 +2967,7 @@ function feed_links( $args = array() ) {
  *
  * @since 2.8.0
  *
- * @param array $args Optional arguments.
+ * @param array|string $args Optional arguments.
  */
 function feed_links_extra( $args = array() ) {
 	$defaults = array(

@@ -218,11 +218,11 @@ function date_i18n( $format, $timestamp_with_offset = false, $gmt = false ) {
  *
  * @since 5.3.0
  *
- * @param string       $format    PHP date format.
- * @param int          $timestamp Optional. Unix timestamp. Defaults to current time.
- * @param DateTimeZone $timezone  Optional. Timezone to output result in. Defaults to timezone
- *                                from site settings.
- * @return string|false The date, translated if locale specifies it. False on invalid timestamp input.
+ * @param string             $format    PHP date format.
+ * @param int|null           $timestamp Optional. Unix timestamp. Defaults to current time.
+ * @param DateTimeZone|null  $timezone  Optional. Timezone to output result in. Defaults to timezone
+ *                                      from site settings.
+ * @return string|false      The date, translated if locale specifies it. False on invalid timestamp input.
  */
 function wp_date( $format, $timestamp = null, $timezone = null ) {
 	global $wp_locale;
@@ -4347,7 +4347,7 @@ function smilies_init() {
  * @since 2.3.0 `$args` can now also be an object.
  *
  * @param string|array|object $args     Value to merge with $defaults.
- * @param array               $defaults Optional. Array that serves as the defaults. Default empty.
+ * @param array|string        $defaults Optional. Array that serves as the defaults. Default empty.
  * @return array Merged user defined values with defaults.
  */
 function wp_parse_args( $args, $defaults = '' ) {
