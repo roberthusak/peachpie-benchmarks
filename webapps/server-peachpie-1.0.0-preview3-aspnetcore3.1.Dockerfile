@@ -4,7 +4,7 @@ COPY ./config/peachpie /peachpie
 
 # Restore NuGet packages before the specific app is questioned to better utilize Docker image caching
 WORKDIR /peachpie
-RUN echo "{ \"msbuild-sdks\": { \"Peachpie.NET.Sdk\": \"0.9.981\" } }" > global.json
+RUN echo "{ \"msbuild-sdks\": { \"Peachpie.NET.Sdk\": \"1.0.0-preview3\" } }" > global.json
 RUN dotnet restore
 
 ARG app

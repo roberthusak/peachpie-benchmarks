@@ -45,15 +45,17 @@ $appDirs = Get-ChildItem ./apps -Filter $appFilter
 
 # Generate all the docker images, one for each pair of server and app, and an optional database for each app
 Foreach ($appDir in $appDirs) {
+  $app = $appDir.Name
+
   Foreach ($serverDockerFile in $serverDockerFiles) {
     $tag = Get-ServerTagName $serverDockerFile $appDir
-    & docker build --tag $tag --file $serverDockerFile --build-arg app=$appDir .
+    & docker build --tag $tag --file $serverDockerFile --build-arg app=$app .
   }
 
-  $dbDockerfile = "./apps/${appDir}/db.Dockerfile"
+  $dbDockerfile = "./apps/${app}/db.Dockerfile"
   if (Test-Path $dbDockerfile) {
     $dbTag = Get-DbTagName $appDir
-    & docker build --tag $dbTag --file $dbDockerfile "./apps/${appDir}"
+    & docker build --tag $dbTag --file $dbDockerfile "./apps/${app}"
   }
 }
 
@@ -77,7 +79,8 @@ Foreach ($serverDockerFile in $serverDockerFiles) {
 
     # Run the database container if its image is available
     $dbTag = Get-DbTagName $appDir
-    if (& docker images -q $dbTag) {
+    $hasDb = & docker images -q $dbTag
+    if ($hasDb) {
       & docker run --name $dbContainer --network $network --detach --rm $dbTag
     }
 
@@ -95,11 +98,13 @@ Foreach ($serverDockerFile in $serverDockerFiles) {
     } until ($?)
 
     # Wait for the DB to start
-    do {
-      Write-Output "Waiting for DB.."
-      Start-Sleep -s 3
-      & docker exec --env MYSQL_PWD=password $clientContainer mysql -u root -h $dbContainer -e ";"
-    } until ($?)
+    if ($hasDb) {
+      do {
+        Write-Output "Waiting for DB.."
+        Start-Sleep -s 3
+        & docker exec --env MYSQL_PWD=password $clientContainer mysql -u root -h $dbContainer -e ";"
+      } until ($?)
+    }
 
     # Warm-up server (the client is reused to prevent from cooling it down due to reset)
     & docker exec $clientContainer ab -t $seconds -c $concurrency -n $maxRequests $url

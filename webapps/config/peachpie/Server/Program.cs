@@ -30,9 +30,16 @@ namespace peachpie.Server
             app.UseDefaultFiles();
 
             // Use static files embedded in the compiled assembly
-            var assembly = Assembly.Load(new AssemblyName("peachpie"));
-            var fileProvider = new ManifestEmbeddedFileProvider(assembly);
-            app.UseStaticFiles(new StaticFileOptions() { FileProvider = fileProvider });
+            try
+            {
+                var assembly = Assembly.Load(new AssemblyName("peachpie"));
+                var fileProvider = new ManifestEmbeddedFileProvider(assembly);
+                app.UseStaticFiles(new StaticFileOptions() { FileProvider = fileProvider });
+            }
+            catch (InvalidOperationException)
+            {
+                // Silently ignore the lack of the manifest
+            }
         }
     }
 }
