@@ -6,6 +6,7 @@ using BenchmarkDotNet.Toolchains.InProcess.Emit;
 using Pchp.Core;
 using System;
 using System.IO;
+using System.Reflection;
 
 namespace Benchmarks
 {
@@ -21,32 +22,41 @@ namespace Benchmarks
     [MemoryDiagnoser]
     public class WpBenchmark
     {
-        private MemoryStream BinaryOutput = new MemoryStream();
-        private StreamWriter TextOutput = new StreamWriter(new MemoryStream());
+        private static readonly string WordPressProjectDir = Path.GetFullPath(@"..\..\..\..\..\..\..\..\Website");
 
-        private Context InitContext()
+        private bool assemblyLoaded = false;
+
+        private readonly MemoryStream binaryOutput = new MemoryStream();
+        private readonly StreamWriter textOutput = new StreamWriter(new MemoryStream());
+
+        private void LazyLoadPeachpieAssembly(string configuration)
         {
-            Context.AddScriptReference(typeof(WP).Assembly);
+            if (!this.assemblyLoaded)
+            {
+                var assembly = Assembly.LoadFrom(@$"{WordPressProjectDir}\bin\{configuration}\netstandard2.0\WordPress.{configuration}.dll");
+                Context.AddScriptReference(assembly);
+                this.assemblyLoaded = true;
+            }
+        }
 
-            BinaryOutput.Position = 0;
-            TextOutput.BaseStream.Position = 0;
+        private void RunBenchmark(string configuration)
+        {
+            LazyLoadPeachpieAssembly(configuration);
 
+            // Reset streams
+            this.binaryOutput.Position = 0;
+            this.textOutput.BaseStream.Position = 0;
+
+            // Initialize context
             using var ctx = Context.CreateConsole("index.php");
-            ctx.RootPath = ctx.WorkingDirectory = Path.GetFullPath(@"..\..\..\..\Website");
-            ctx.OutputStream = BinaryOutput;
-            ctx.Output = TextOutput;
+            ctx.RootPath = ctx.WorkingDirectory = WordPressProjectDir;
+            ctx.OutputStream = this.binaryOutput;
+            ctx.Output = this.textOutput;
             ctx.Server["HTTP_HOST"] = "localhost";
             ctx.Server["REQUEST_URI"] = "/";
 
-            return ctx;
-        }
-
-        [Benchmark(Baseline = true)]
-        public void Default()
-        {
-            var ctx = InitContext();
+            // Run the script
             var index = Context.TryGetDeclaredScript("index.php");
-
             try
             {
                 index.Evaluate(ctx, PhpArray.NewEmpty(), null);
@@ -56,5 +66,17 @@ namespace Benchmarks
                 died.ProcessStatus(ctx);
             }
         }
+
+        [Benchmark(Baseline = true)]
+        public void Release() => RunBenchmark(nameof(Release));
+
+        [Benchmark]
+        public void PhpDocForce() => RunBenchmark(nameof(PhpDocForce));
+
+        [Benchmark]
+        public void PhpDocOverloadsStatic() => RunBenchmark(nameof(PhpDocOverloadsStatic));
+
+        [Benchmark]
+        public void PhpDocOverloadsDynamic() => RunBenchmark(nameof(PhpDocOverloadsDynamic));
     }
 }

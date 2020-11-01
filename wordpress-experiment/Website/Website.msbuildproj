@@ -1,11 +1,26 @@
-<Project Sdk="Peachpie.NET.Sdk">
+﻿<Project Sdk="Peachpie.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Library</OutputType>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyName>peachpie</AssemblyName>
     <GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
   </PropertyGroup>
+
+  <!-- Compile all tested variants upon Release build -->
+  <PropertyGroup>
+    <AssemblyName>WordPress.$(Configuration)</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'PhpDocOverloadsStatic' or '$(Configuration)' == 'PhpDocOverloadsDynamic'">
+    <ExperimentalOptimization>$(Configuration)</ExperimentalOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'PhpDocForce'">
+    <PhpDocTypes>ParameterTypes,ReturnTypes</PhpDocTypes>
+  </PropertyGroup>
+  <Target Name="BuildAllOptimizedConfigurations" AfterTargets="AfterBuild" Condition="'$(Configuration)' == 'Release'">
+    <Exec Command="dotnet build -c PhpDocOverloadsStatic" ConsoleToMSBuild="true" LogStandardErrorAsError="true" WorkingDirectory="$(ProjectDir)" />
+    <Exec Command="dotnet build -c PhpDocOverloadsDynamic" ConsoleToMSBuild="true" LogStandardErrorAsError="true" WorkingDirectory="$(ProjectDir)" />
+    <Exec Command="dotnet build -c PhpDocForce" ConsoleToMSBuild="true" LogStandardErrorAsError="true" WorkingDirectory="$(ProjectDir)" />
+  </Target>
 
   <ItemGroup>
     <Compile Include="**/*.php" Exclude="wp-content/plugins/akismet/class.akismet-cli.php;wp-includes/class-json.php" />
