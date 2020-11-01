@@ -26,12 +26,13 @@ namespace peachpie.Server
     {
         public void Configure(IApplicationBuilder app, IHostEnvironment env)
         {
-            app.UsePhp(new PhpRequestOptions(scriptAssemblyName: "peachpie"));
+            var wpAssembly = typeof(WP).Assembly;
+
+            app.UsePhp(new PhpRequestOptions(scriptAssemblyName: wpAssembly.GetName().Name));
             app.UseDefaultFiles();
 
             // Use static files embedded in the compiled assembly
-            var assembly = Assembly.Load(new AssemblyName("peachpie"));
-            var fileProvider = new ManifestEmbeddedFileProvider(assembly);
+            var fileProvider = new ManifestEmbeddedFileProvider(wpAssembly);
             app.UseStaticFiles(new StaticFileOptions() { FileProvider = fileProvider });
         }
     }
