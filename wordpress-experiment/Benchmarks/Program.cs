@@ -22,7 +22,7 @@ namespace Benchmarks
     [MemoryDiagnoser]
     public class WpBenchmark
     {
-        private static readonly string WordPressProjectDir = Path.GetFullPath(@"..\..\..\..\..\..\..\..\Website");
+        private static readonly string WordPressProjectDir = Path.GetFullPath(@"../../../../../../../../Website");
 
         private bool assemblyLoaded = false;
 
@@ -33,7 +33,7 @@ namespace Benchmarks
         {
             if (!this.assemblyLoaded)
             {
-                var assembly = Assembly.LoadFrom(@$"{WordPressProjectDir}\bin\{configuration}\netstandard2.0\WordPress.{configuration}.dll");
+                var assembly = Assembly.LoadFrom(@$"{WordPressProjectDir}/bin/{configuration}/netstandard2.0/WordPress.{configuration}.dll");
                 Context.AddScriptReference(assembly);
                 this.assemblyLoaded = true;
             }
