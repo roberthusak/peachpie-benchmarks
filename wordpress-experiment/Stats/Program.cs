@@ -21,14 +21,28 @@ namespace Stats
             var assembly = Assembly.LoadFrom($"{wpDir}/bin/{configuration}/netstandard2.0/WordPress.{configuration}.dll");
             Context.AddScriptReference(assembly);
 
+            // Write the compilation results
+            var compilationCounters = assembly.GetCustomAttribute<CompilationCountersAttribute>();
+            Console.WriteLine($"Total routines (functions): {compilationCounters.Routines} ({compilationCounters.GlobalFunctions})");
+            Console.WriteLine($"Specialized routines: {compilationCounters.Specializations}");
+            Console.WriteLine();
+
+            RunWordPress(wpDir, proofFile);
+
+            // Write the runtime results
+            Console.WriteLine($"Total routine calls (functions): {RuntimeCounters.RoutineCalls} ({RuntimeCounters.GlobalFunctionCalls})");
+            Console.WriteLine($"Specialization calls (original/specialized): {RuntimeCounters.OriginalOverloadCalls}/{RuntimeCounters.SpecializedOverloadCalls}");
+            Console.WriteLine($"Checks (original/specialized selects): {RuntimeCounters.BranchedCallChecks} ({RuntimeCounters.BranchedCallOriginalSelects}/{RuntimeCounters.BranchedCallSpecializedSelects})");
+        }
+
+        private static void RunWordPress(string wpDir, string proofFile)
+        {
             // Clean up the output file before the run
             File.WriteAllText(proofFile, "");
 
             var binOut = new MemoryStream();
             var textOut = new StreamWriter(binOut);
-
-            // Initialize context
-            using var ctx = Context.CreateConsole("index.php");
+            var ctx = Context.CreateConsole("index.php");
             ctx.RootPath = ctx.WorkingDirectory = wpDir;
             ctx.OutputStream = binOut;
             ctx.Output = textOut;
@@ -49,11 +63,6 @@ namespace Stats
             // Output the result to the file
             textOut.Flush();
             File.WriteAllBytes(proofFile, binOut.ToArray());
-
-            // Write the runtime results
-            Console.WriteLine($"Total routine calls (functions): {RuntimeCounters.RoutineCalls} ({RuntimeCounters.GlobalFunctionCalls})");
-            Console.WriteLine($"Specialization calls (original/specialized): {RuntimeCounters.OriginalOverloadCalls}/{RuntimeCounters.SpecializedOverloadCalls}");
-            Console.WriteLine($"Checks (original/specialized selects): {RuntimeCounters.BranchedCallChecks} ({RuntimeCounters.BranchedCallOriginalSelects}/{RuntimeCounters.BranchedCallSpecializedSelects})");
         }
     }
 }
