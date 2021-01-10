@@ -23,13 +23,20 @@ namespace Stats
 
             // Write the compilation results
             var compilationCounters = assembly.GetCustomAttribute<CompilationCountersAttribute>();
+            Console.WriteLine("Compilation counters:");
             Console.WriteLine($"Total routines (functions): {compilationCounters.Routines} ({compilationCounters.GlobalFunctions})");
             Console.WriteLine($"Specialized routines: {compilationCounters.Specializations}");
+            Console.WriteLine($"Total routine call sites (functions): {compilationCounters.RoutineCalls} ({compilationCounters.FunctionCalls})");
+            Console.WriteLine($"Library function call sites (including ambiguous): {compilationCounters.LibraryFunctionCalls}");
+            Console.WriteLine($"Ambiguous source function call sites: {compilationCounters.AmbiguousSourceFunctionCalls}");
+            Console.WriteLine($"Branched source function call sites: {compilationCounters.BranchedSourceFunctionCalls}");
+            Console.WriteLine($"Original/specialized function call sites: {compilationCounters.OriginalSourceFunctionCalls}/{compilationCounters.SpecializedSourceFunctionCalls}");
             Console.WriteLine();
 
             RunWordPress(wpDir, proofFile);
 
             // Write the runtime results
+            Console.WriteLine("Runtime counters:");
             Console.WriteLine($"Total routine calls (functions): {RuntimeCounters.RoutineCalls} ({RuntimeCounters.GlobalFunctionCalls})");
             Console.WriteLine($"Specialization calls (original/specialized): {RuntimeCounters.OriginalOverloadCalls}/{RuntimeCounters.SpecializedOverloadCalls}");
             Console.WriteLine($"Checks (original/specialized selects): {RuntimeCounters.BranchedCallChecks} ({RuntimeCounters.BranchedCallOriginalSelects}/{RuntimeCounters.BranchedCallSpecializedSelects})");
